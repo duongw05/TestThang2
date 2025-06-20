@@ -1,0 +1,97 @@
+{
+  "category": {
+    "name": "Tên danh mục",
+    "code": "Mã danh mục",
+    "description": "Mô tả",
+    "status": "Trạng thái",
+    "images": "Ảnh danh mục",
+    "createdBy": "Người tạo",
+    "modifiedBy": "Người sửa",
+    "submit": "Gửi",
+    "selectImages": "Chọn ảnh",
+    "listTitle": "Danh sách danh mục",
+    "exportExcel": "Xuất Excel",
+    "item": "mục",
+    "createdDate": "Ngày tạo",
+    "noImage": "Không có ảnh",
+    "noDescription": "Không có mô tả",
+    "unknown": "Không xác định",
+    "detailTitle": "Chi tiết danh mục",
+    "emptyText": "Không có danh mục nào phù hợp với bộ lọc",
+    "add": "Thêm danh mục"
+  },
+
+  "sidebar": {
+    "home": "Trang chủ",
+    "productManagement": "Quản lý sản phẩm",
+    "products": "Sản phẩm",
+    "categories": "Danh mục"
+  },
+
+  "carousel": {
+    "text1": "Xin chào mọi người",
+    "text2": "Giảm giá lớn trong tuần này! 🔥",
+    "text3": "Mua ngay và tiết kiệm nhiều hơn! 🛍️"
+  },
+
+  "logout": "Đăng xuất",
+
+  "categoryList": "Danh sách danh mục",
+  "exportExcel": "Xuất Excel",
+  "categoryName": "Tên danh mục",
+  "categoryCode": "Mã danh mục",
+  "fromDate": "Từ ngày",
+  "toDate": "Đến ngày",
+  "search": "Tìm kiếm",
+  "reset": "Xóa lọc",
+  "noData": "Không có danh mục nào phù hợp với bộ lọc",
+  "status": "Trạng thái",
+  "createdDate": "Ngày tạo",
+  "actions": "Thao tác",
+  "details": "Chi tiết",
+  "exportConfirm": "Bạn có muốn xuất Excel cho {count} danh mục đã chọn không?",
+  "exportSuccess": "Đã gửi yêu cầu xuất Excel với các ID: {ids}",
+  "exportCancel": "Đã hủy xuất Excel.",
+  "noSelection": "Vui lòng chọn ít nhất một danh mục để xuất.",
+  "detailDialogTitle": "Chi tiết danh mục",
+  "createdBy": "Người tạo",
+  "description": "Mô tả",
+  "noDescription": "Không có mô tả",
+  "noImages": "Không có ảnh danh mục",
+
+  "messages": {
+    "loadFailed": "Không thể tải danh mục. Vui lòng thử lại sau.",
+    "selectToExport": "Vui lòng chọn ít nhất một danh mục để xuất.",
+    "confirmExport": "Bạn có muốn xuất Excel cho {count} danh mục đã chọn không?",
+    "confirmTitle": "Xác nhận xuất Excel",
+    "exportRequested": "Đã gửi yêu cầu xuất Excel với các ID: {ids}",
+    "exportCancelled": "Đã hủy xuất Excel."
+  },
+
+  "action": {
+    "search": "Tìm kiếm",
+    "reset": "Xóa lọc",
+    "details": "Chi tiết",
+    "actions": "Thao tác"
+  },
+
+  "filter": {
+    "fromDate": "Từ ngày",
+    "toDate": "Đến ngày"
+  },
+
+  "placeholder": {
+    "enterName": "Nhập tên",
+    "enterCode": "Nhập mã",
+    "fromDate": "Từ ngày",
+    "toDate": "Đến ngày"
+  },
+
+  "table": {
+    "index": "STT"
+  },
+
+  "form": {
+    "labelWidth": "100px"
+  }
+}

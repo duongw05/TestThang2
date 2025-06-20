@@ -1,0 +1,97 @@
+{
+  "category": {
+    "name": "Category Name",
+    "code": "Category Code",
+    "description": "Description",
+    "status": "Status",
+    "images": "Category Images",
+    "createdBy": "Created By",
+    "modifiedBy": "Modified By",
+    "submit": "Submit",
+    "selectImages": "Select Images",
+    "listTitle": "Category List",
+    "exportExcel": "Export to Excel",
+    "item": "item",
+    "createdDate": "Created Date",
+    "noImage": "No image",
+    "noDescription": "No description",
+    "unknown": "Unknown",
+    "detailTitle": "Category Details",
+    "emptyText": "No categories match the filter",
+    "add": "Add Category"
+  },
+
+  "sidebar": {
+    "home": "Home",
+    "productManagement": "Product Management",
+    "products": "Products",
+    "categories": "Categories"
+  },
+
+  "carousel": {
+    "text1": "Hello everyone",
+    "text2": "Big discounts this week! 🔥",
+    "text3": "Shop now and save more! 🛍️"
+  },
+
+  "logout": "Logout",
+
+  "categoryList": "Category List",
+  "exportExcel": "Export to Excel",
+  "categoryName": "Category Name",
+  "categoryCode": "Category Code",
+  "fromDate": "From Date",
+  "toDate": "To Date",
+  "search": "Search",
+  "reset": "Clear Filters",
+  "noData": "No categories match the filter",
+  "status": "Status",
+  "createdDate": "Created Date",
+  "actions": "Actions",
+  "details": "Details",
+  "exportConfirm": "Do you want to export to Excel for {count} selected categories?",
+  "exportSuccess": "Export request sent with IDs: {ids}",
+  "exportCancel": "Excel export cancelled.",
+  "noSelection": "Please select at least one category to export.",
+  "detailDialogTitle": "Category Details",
+  "createdBy": "Created By",
+  "description": "Description",
+  "noDescription": "No description",
+  "noImages": "No category images",
+
+  "messages": {
+    "loadFailed": "Unable to load categories. Please try again later.",
+    "selectToExport": "Please select at least one category to export.",
+    "confirmExport": "Do you want to export to Excel for {count} selected categories?",
+    "confirmTitle": "Confirm Excel Export",
+    "exportRequested": "Export request sent with IDs: {ids}",
+    "exportCancelled": "Excel export cancelled."
+  },
+
+  "action": {
+    "search": "Search",
+    "reset": "Clear Filters",
+    "details": "Details",
+    "actions": "Actions"
+  },
+
+  "filter": {
+    "fromDate": "From Date",
+    "toDate": "To Date"
+  },
+
+  "placeholder": {
+    "enterName": "Enter name",
+    "enterCode": "Enter code",
+    "fromDate": "From date",
+    "toDate": "To date"
+  },
+
+  "table": {
+    "index": "No."
+  },
+
+  "form": {
+    "labelWidth": "100px"
+  }
+}
