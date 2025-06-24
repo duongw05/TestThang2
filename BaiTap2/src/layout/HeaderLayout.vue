@@ -15,18 +15,15 @@
       </div>
     </div>
 
-    <!-- Language Switch + Logout -->
     <div class="d-flex align-items-center gap-4">
       <div class="lang-switch d-flex align-items-center gap-2">
         <span class="fw-semibold">{{ locale === 'vi' ? 'VI' : 'EN' }}</span>
 
-        <!-- Toggle -->
         <label class="switch">
           <input type="checkbox" :checked="locale === 'en'" @change="toggleLocale" />
           <span class="slider"></span>
         </label>
 
-        <!-- Flag -->
         <img
             :src="locale === 'vi' ? viFlag : enFlag"
             alt="Flag"
@@ -35,7 +32,6 @@
         />
       </div>
 
-      <button class="btn btn-danger">{{ $t('logout') }}</button>
     </div>
   </header>
 </template>
@@ -55,7 +51,6 @@ const toggleLocale = () => {
 </script>
 
 <style scoped>
-/* Toggle switch đẹp */
 .switch {
   position: relative;
   display: inline-block;

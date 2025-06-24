@@ -2,32 +2,36 @@
   <el-card class="box-card" shadow="hover">
     <template #header>
       <div class="card-header">
-        <span>Chi tiết sản phẩm: {{ product?.productName || 'Đang tải...' }}</span>
-        <el-button type="primary" @click="goBack" size="small" plain>Quay lại</el-button>
+        <span>{{ $t('product.detailTitle') }}: {{ product?.productName || $t('loading') }}</span>
+        <el-button type="primary" @click="goBack" size="small" plain>
+          {{ $t('action.back') }}
+        </el-button>
       </div>
     </template>
 
-    <el-empty v-if="loading" description="Đang tải dữ liệu..." />
-    <el-empty v-else-if="error" description="Không tìm thấy sản phẩm" />
+    <el-empty v-if="loading" :description="$t('loading')" />
+    <el-empty v-else-if="error" :description="$t('error.notFound')" />
 
     <template v-else-if="product">
-      <!-- Thông tin sản phẩm -->
-      <el-descriptions title="Thông tin sản phẩm" :column="2" border>
-        <el-descriptions-item label="Mã sản phẩm">{{ product.productCode }}</el-descriptions-item>
-        <el-descriptions-item label="Tên sản phẩm">{{ product.productName }}</el-descriptions-item>
-        <el-descriptions-item label="Trạng thái">{{ product.status === 'ACTIVE' ? 'Hoạt động' : 'Ngừng hoạt động' }}</el-descriptions-item>
-        <el-descriptions-item label="Giá">{{ formatCurrency(product.price) }}</el-descriptions-item>
-        <el-descriptions-item label="Số lượng">{{ product.quantity }}</el-descriptions-item>
-        <el-descriptions-item label="Người tạo">{{ product.createdBy || 'Không có' }}</el-descriptions-item>
-        <el-descriptions-item label="Ngày tạo">{{ formatDate(product.createdDate) }}</el-descriptions-item>
-        <el-descriptions-item label="Người sửa">{{ product.modifiedBy || 'Không có' }}</el-descriptions-item>
-        <el-descriptions-item label="Ngày sửa">{{ formatDate(product.modifiedDate) }}</el-descriptions-item>
-        <el-descriptions-item label="Mô tả">{{ product.description || 'Không có' }}</el-descriptions-item>
+      <el-descriptions :title="$t('product.infoTitle')" :column="2" border>
+        <el-descriptions-item :label="$t('product.productCode')">{{ product.productCode }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('product.productName')">{{ product.productName }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('product.status')">
+          {{ product.status === 'ACTIVE' ? $t('status.active') : $t('status.inactive') }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="$t('product.price')">
+          {{ formatCurrency(product.price) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="$t('product.quantity')">{{ product.quantity }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('product.createdBy')">{{ product.createdBy || $t('product.noValue') }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('product.createDate')">{{ formatDate(product.createdDate) }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('product.modifiedBy')">{{ product.modifiedBy || $t('product.noValue') }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('product.updateDate')">{{ formatDate(product.modifiedDate) }}</el-descriptions-item>
+        <el-descriptions-item :label="$t('product.description')">{{ product.description || $t('product.noDescription') }}</el-descriptions-item>
       </el-descriptions>
 
-      <!-- Danh mục -->
-      <div v-if="product.categories?.length" style="margin-top: 30px">
-        <h3>Danh mục liên quan</h3>
+      <div v-if="product.categories?.length" class="mt-4">
+        <h3>{{ $t('product.relatedCategories') }}</h3>
         <el-tag
             v-for="cat in product.categories"
             :key="cat.id"
@@ -39,11 +43,18 @@
         </el-tag>
       </div>
 
-      <!-- Ảnh sản phẩm -->
-      <div v-if="product.productImages?.length" style="margin-top: 30px">
-        <h3>Ảnh sản phẩm</h3>
-        <el-carousel height="200px" trigger="click" arrow="always">
-          <el-carousel-item v-for="img in product.productImages" :key="img.id">
+      <div v-if="product.productImages?.length" class="mt-4">
+        <div class="image-gallery-header">
+          <h3>{{ $t('product.images') }}</h3>
+          <span class="image-count" v-if="product.productImages.length > 0">
+              {{ $t('product.imageIndex', { current: currentImageIndex + 1, total: product.productImages.length }) }}
+          </span>
+        </div>
+        <el-carousel height="200px" trigger="click" arrow="always" @change="handleCarouselChange">
+          <el-carousel-item
+              v-for="(img, index) in product.productImages"
+              :key="img.id"
+          >
             <img
                 :src="`data:image/png;base64,${img.image}`"
                 alt="product image"
@@ -59,17 +70,20 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import api from '@/utils/axios.js';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 
 const product = ref(null);
 const loading = ref(false);
 const error = ref(false);
+const currentImageIndex = ref(0);
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'Không có';
+  if (!dateString) return t('product.noValue');
   const date = new Date(dateString);
   return date.toLocaleString('vi-VN');
 };
@@ -89,7 +103,7 @@ const fetchProduct = async (id) => {
   loading.value = true;
   error.value = false;
   try {
-    const res = await axios.get(`http://localhost:8080/api/products/${id}`);
+    const res = await api.get(`/products/${id}`);
     product.value = res.data;
   } catch (e) {
     console.error('Lỗi khi fetch sản phẩm:', e);
@@ -97,6 +111,10 @@ const fetchProduct = async (id) => {
   } finally {
     loading.value = false;
   }
+};
+
+const handleCarouselChange = (newIndex) => {
+  currentImageIndex.value = newIndex;
 };
 
 onMounted(() => {
@@ -118,5 +136,15 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.image-gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.image-count {
+  font-weight: bold;
+  color: #606266;
 }
 </style>

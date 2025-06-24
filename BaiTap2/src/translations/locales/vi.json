@@ -7,18 +7,77 @@
     "images": "Ảnh danh mục",
     "createdBy": "Người tạo",
     "modifiedBy": "Người sửa",
+    "createdDate": "Ngày tạo",
+    "modifiedDate": "Ngày sửa",
     "submit": "Gửi",
     "selectImages": "Chọn ảnh",
     "listTitle": "Danh sách danh mục",
+    "detailTitle": "Chi tiết danh mục",
     "exportExcel": "Xuất Excel",
-    "item": "mục",
-    "createdDate": "Ngày tạo",
+    "add": "Thêm danh mục",
+    "emptyText": "Không có danh mục nào phù hợp với bộ lọc",
     "noImage": "Không có ảnh",
     "noDescription": "Không có mô tả",
     "unknown": "Không xác định",
-    "detailTitle": "Chi tiết danh mục",
-    "emptyText": "Không có danh mục nào phù hợp với bộ lọc",
-    "add": "Thêm danh mục"
+    "item": "mục",
+    "updateTitle": "Cập nhật Danh mục",
+    "updateSuccess": "Cập nhật danh mục thành công!",
+    "updateFailed": "Cập nhật thất bại!",
+    "imageRequired": "Vui lòng chọn ít nhất 1 ảnh danh mục.",
+    "uploadImages": "Tải lên hình ảnh"
+  },
+  "product": {
+    "listTitle": "Danh sách sản phẩm",
+    "add": "Thêm sản phẩm",
+    "exportExcel": "Xuất Excel",
+    "searchTitle": "Tìm kiếm sản phẩm",
+    "nameOrCode": "Tên hoặc Mã sản phẩm",
+    "fromDate": "Từ ngày",
+    "toDate": "Đến ngày",
+    "category": "Danh mục",
+    "productCode" : "Mã sản phẩm",
+    "productName" : "Tên sản phẩm",
+    "createDate": "Ngày tạo",
+    "updateDate": "Ngày sửa",
+    "createdBy": "Người tạo",
+    "modifiedBy": "Người sửa",
+    "price": "Giá",
+    "quantity": "Số lượng",
+    "description": "Mô tả",
+    "actions": "Hành động",
+    "detail": "Chi tiết",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "confirmDelete": "Bạn có chắc chắn muốn xoá sản phẩm này?",
+    "deleteSuccess": "Xóa sản phẩm thành công!",
+    "deleteCancel": "Đã hủy xóa",
+    "deleteError": "Không thể xóa sản phẩm. Vui lòng thử lại.",
+    "noData": "Không có dữ liệu",
+    "exportConfirm": "Bạn có chắc chắn muốn xuất danh sách sản phẩm ra file Excel?",
+    "exportTitle": "Xác nhận xuất Excel",
+    "exportSuccess": "Xuất Excel thành công!",
+    "exportCancel": "Đã hủy xuất Excel.",
+    "exportError": "Không thể xuất Excel. Vui lòng thử lại.",
+    "detailTitle": "Chi tiết sản phẩm",
+    "infoTitle": "Thông tin sản phẩm",
+    "relatedCategories": "Danh mục liên quan",
+    "noDescription": "Không có mô tả",
+    "noValue": "Không có",
+    "images": "Ảnh sản phẩm",
+    "imageIndex": "Ảnh {current} / {total}",
+    "selectLabel": "Nhấn Enter để chọn",
+    "deselectLabel": "Nhấn Enter để bỏ chọn",
+    "selectedLabel": "Đã chọn",
+    "updateTitle": "Cập nhật Sản phẩm",
+    "updateSuccess": "Cập nhật sản phẩm thành công!",
+    "updateFailed": "Cập nhật sản phẩm thất bại!",
+    "confirmUpdate": "Bạn có chắc chắn muốn cập nhật sản phẩm này không?",
+    "submitUpdate": "Cập nhật sản phẩm",
+    "selectedCategories": "Danh mục đã chọn",
+    "imageRequired": "Vui lòng tải lên ít nhất một hình ảnh",
+    "uploadImage": "Tải lên hình ảnh",
+    "loadingProduct": "Đang tải dữ liệu sản phẩm..."
+
   },
 
   "sidebar": {
@@ -34,45 +93,8 @@
     "text3": "Mua ngay và tiết kiệm nhiều hơn! 🛍️"
   },
 
-  "logout": "Đăng xuất",
-
-  "categoryList": "Danh sách danh mục",
-  "exportExcel": "Xuất Excel",
-  "categoryName": "Tên danh mục",
-  "categoryCode": "Mã danh mục",
-  "fromDate": "Từ ngày",
-  "toDate": "Đến ngày",
-  "search": "Tìm kiếm",
-  "reset": "Xóa lọc",
-  "noData": "Không có danh mục nào phù hợp với bộ lọc",
-  "status": "Trạng thái",
-  "createdDate": "Ngày tạo",
-  "actions": "Thao tác",
-  "details": "Chi tiết",
-  "exportConfirm": "Bạn có muốn xuất Excel cho {count} danh mục đã chọn không?",
-  "exportSuccess": "Đã gửi yêu cầu xuất Excel với các ID: {ids}",
-  "exportCancel": "Đã hủy xuất Excel.",
-  "noSelection": "Vui lòng chọn ít nhất một danh mục để xuất.",
-  "detailDialogTitle": "Chi tiết danh mục",
-  "createdBy": "Người tạo",
-  "description": "Mô tả",
-  "noDescription": "Không có mô tả",
-  "noImages": "Không có ảnh danh mục",
-
-  "messages": {
-    "loadFailed": "Không thể tải danh mục. Vui lòng thử lại sau.",
-    "selectToExport": "Vui lòng chọn ít nhất một danh mục để xuất.",
-    "confirmExport": "Bạn có muốn xuất Excel cho {count} danh mục đã chọn không?",
-    "confirmTitle": "Xác nhận xuất Excel",
-    "exportRequested": "Đã gửi yêu cầu xuất Excel với các ID: {ids}",
-    "exportCancelled": "Đã hủy xuất Excel."
-  },
-
-  "action": {
-    "search": "Tìm kiếm",
-    "reset": "Xóa lọc",
-    "details": "Chi tiết",
-    "actions": "Thao tác"
+  "table": {
+    "index": "STT"
   },
 
   "filter": {
@@ -81,17 +103,99 @@
   },
 
   "placeholder": {
+    "enterKeyword": "Nhập tên hoặc mã",
     "enterName": "Nhập tên",
     "enterCode": "Nhập mã",
     "fromDate": "Từ ngày",
-    "toDate": "Đến ngày"
-  },
-
-  "table": {
-    "index": "STT"
+    "toDate": "Đến ngày",
+    "enterDescription": "Nhập mô tả sản phẩm",
+    "enterQuantity": "Nhập số lượng",
+    "enterPrice": "Nhập giá bán",
+    "selectCategory": "Chọn danh mục"
   },
 
   "form": {
     "labelWidth": "100px"
+  },
+
+  "action": {
+    "search": "Tìm kiếm",
+    "reset": "Xóa lọc",
+    "details": "Chi tiết",
+    "actions": "Thao tác",
+    "back": "Quay lại",
+    "confirm": "Xác nhận",
+    "cancel": "Hủy",
+    "success": "Thành công",
+    "error": "Lỗi",
+    "warning": "Cảnh báo"
+  },
+
+  "messages": {
+    "enterCode": "Nhập mã danh mục",
+    "enterName": "Nhập tên danh mục",
+    "enterDescription": "Nhập mô tả",
+    "loadFailed": "Không thể tải danh mục. Vui lòng thử lại sau.",
+    "selectToExport": "Vui lòng chọn ít nhất một danh mục để xuất.",
+    "confirmExport": "Bạn có muốn xuất Excel cho {count} danh mục đã chọn không?",
+    "confirmTitle": "Xác nhận xuất Excel",
+    "exportRequested": "Đã gửi yêu cầu xuất Excel với các ID: {ids}",
+    "exportCancelled": "Đã hủy xuất Excel.",
+    "noSelection": "Vui lòng chọn ít nhất một danh mục để xuất.",
+    "confirmDelete": "Bạn có chắc chắn muốn xoá danh mục này?",
+    "deleteSuccess": "Xóa danh mục thành công!",
+    "deleteCancel": "Đã hủy xóa",
+    "deleteError": "Không thể xóa danh mục. Vui lòng thử lại.",
+    "confirmAdd": "Bạn có chắc chắn muốn thêm danh mục này?",
+    "addSuccess": "Thêm thành công",
+    "confirmUpdate": "Bạn có chắc chắn muốn cập nhật danh mục này?",
+    "updateSuccess": "Cập nhật danh mục thành công!",
+    "updateFailed": "Cập nhật danh mục thất bại!",
+    "imageRequired": "Vui lòng chọn ít nhất một hình ảnh cho danh mục.",
+    "confirmSaveProduct": "Bạn có chắc chắn muốn lưu sản phẩm này không?",
+    "addProductSuccess": "Thêm sản phẩm thành công!",
+    "addProductFailed": "Thêm sản phẩm thất bại!",
+    "validateError": "Vui lòng kiểm tra lại thông tin!",
+    "imageTooLarge": "Ảnh {fileName} vượt quá 3MB!",
+    "imageDuplicated": "Ảnh {fileName} đã được chọn!",
+    "loadProductError": "Không thể tải dữ liệu sản phẩm!",
+    "codeMaxLength": "Độ dài tối đa là 50 kí tự"
+  },
+
+  "status": {
+    "active": "Hoạt động",
+    "inactive": "Ngừng hoạt động"
+  },
+
+  "validation": {
+    "required": "Không được để trống",
+    "maxLength": "Tối đa {max} ký tự",
+    "productCodeRequired": "Vui lòng nhập mã sản phẩm",
+    "productNameRequired": "Vui lòng nhập tên sản phẩm",
+    "productNameMax": "Tên sản phẩm không được vượt quá 200 ký tự",
+    "descriptionRequired": "Vui lòng nhập mô tả sản phẩm",
+    "descriptionMax": "Mô tả không được vượt quá 200 ký tự",
+    "priceRequired": "Vui lòng nhập giá bán",
+    "priceMin": "Giá bán phải từ 0 trở lên",
+    "quantityRequired": "Vui lòng nhập số lượng",
+    "quantityMin": "Số lượng phải từ 0 trở lên",
+    "categoryRequired": "Vui lòng chọn ít nhất một danh mục"
+
+  },
+
+  "loading": "Đang tải dữ liệu...",
+
+  "error": {
+    "notFound": "Không tìm thấy danh mục"
+  },
+
+  "pagination": {
+    "total": "Tổng cộng {total}",
+    "goto": "Đi tới",
+    "pageClassifier": "trang",
+    "pagesize": "mỗi trang",
+    "prev": "Trước",
+    "next": "Sau"
   }
+
 }

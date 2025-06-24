@@ -2,32 +2,35 @@
   <div class="container-fluid mt-4">
     <div class="mb-3 d-flex justify-content-end">
       <el-button type="primary" :icon="Plus" @click="goToAdd">
-        Thêm sản phẩm
+        {{ t('product.add') }}
+      </el-button>
+      <el-button type="success" :icon="Download" @click="exportExcel" class="me-2">
+        {{ t('product.exportExcel') }}
       </el-button>
     </div>
 
     <el-card shadow="hover" class="mb-4">
       <template #header>
         <div class="card-header-title text-center">
-          <h4 class="mb-0">Tìm kiếm sản phẩm</h4>
+          <h4 class="mb-0">{{ t('product.searchTitle') }}</h4>
         </div>
       </template>
       <el-form :model="filters" label-position="top">
         <el-row :gutter="20" align="middle">
           <el-col :span="5">
-            <el-form-item label="Tên hoặc Mã sản phẩm">
-              <el-input v-model="filters.keyword" placeholder="Nhập tên hoặc mã sản phẩm" clearable />
+            <el-form-item :label="t('product.nameOrCode')">
+              <el-input v-model="filters.keyword" :placeholder="t('product.nameOrCode')" clearable />
             </el-form-item>
           </el-col>
 
           <el-col :span="4">
-            <el-form-item label="Từ ngày">
+            <el-form-item :label="t('product.fromDate')">
               <el-date-picker
                   v-model="filters.createdFrom"
                   type="datetime"
-                  placeholder="Chọn ngày bắt đầu"
-                  format="YYYY-MM-DD HH:mm:ss"
-                  value-format="YYYY-MM-DDTHH:mm:ss"
+                  :placeholder="t('product.fromDate')"
+                  format="DD/MM/YYYY HH:mm:ss"
+                  value-format="DD/MM/YYYY HH:mm:ss"
                   class="w-100"
                   clearable
               />
@@ -35,13 +38,13 @@
           </el-col>
 
           <el-col :span="4">
-            <el-form-item label="Đến ngày">
+            <el-form-item :label="t('product.toDate')">
               <el-date-picker
                   v-model="filters.createdTo"
                   type="datetime"
-                  placeholder="Chọn ngày kết thúc"
-                  format="YYYY-MM-DD HH:mm:ss"
-                  value-format="YYYY-MM-DDTHH:mm:ss"
+                  :placeholder="t('product.toDate')"
+                  format="DD/MM/YYYY HH:mm:ss"
+                  value-format="DD/MM/YYYY HH:mm:ss"
                   class="w-100"
                   clearable
               />
@@ -49,10 +52,10 @@
           </el-col>
 
           <el-col :span="6">
-            <el-form-item label="Danh mục">
+            <el-form-item :label="t('product.category')">
               <el-select
                   v-model="filters.categoryId"
-                  placeholder="Chọn danh mục"
+                  :placeholder="t('product.category')"
                   class="w-100"
                   clearable
               >
@@ -66,10 +69,16 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="5" class="d-flex align-items-end">
-            <el-form-item label=" ">
-              <el-button type="primary" :icon="Search" @click="handleSearch" class="me-2">Tìm kiếm</el-button>
-              <el-button :icon="Refresh" @click="resetFilters">Đặt lại</el-button>
+          <el-col :span="5">
+            <el-form-item label="&nbsp;">
+              <div class="d-flex">
+                <el-button type="primary" :icon="Search" @click="handleSearch" class="me-2">
+                  {{ t('action.search') }}
+                </el-button>
+                <el-button :icon="Refresh" @click="resetFilters">
+                  {{ t('action.reset') }}
+                </el-button>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -83,25 +92,25 @@
           stripe
           border
           style="width: 100%"
-          empty-text="Không có dữ liệu"
+          :empty-text="t('product.noData')"
       >
         <el-table-column type="index" label="#" width="60" :index="getIndex" />
-        <el-table-column prop="productCode" label="Mã" width="140" />
-        <el-table-column label="Danh mục" min-width="180">
+        <el-table-column prop="productCode" :label="t('product.productCode')" width="140" />
+        <el-table-column :label="t('product.category')" min-width="180">
           <template #default="{ row }">{{ row.categoryNames?.join(', ') }}</template>
         </el-table-column>
-        <el-table-column prop="productName" label="Tên sản phẩm" min-width="180" show-overflow-tooltip />
-        <el-table-column prop="price" label="Giá" width="120" :formatter="formatCurrency" />
-        <el-table-column prop="quantity" label="SL" width="80" />
-        <el-table-column prop="createdDate" label="Ngày tạo" width="160" :formatter="formatDate" />
-        <el-table-column prop="createdBy" label="Người tạo" width="120" />
-        <el-table-column prop="modifiedDate" label="Ngày sửa" width="160" :formatter="formatDate" />
-        <el-table-column prop="modifiedBy" label="Người sửa" width="120" />
-        <el-table-column label="Hành động" width="150" fixed="right">
+        <el-table-column prop="productName" :label="t('product.productName')" min-width="180" show-overflow-tooltip />
+        <el-table-column prop="price" :label="t('product.price')" width="120" :formatter="formatCurrency" />
+        <el-table-column prop="quantity" :label="t('product.quantity')" width="100" />
+        <el-table-column prop="createdDate" :label="t('product.createDate')" width="160" :formatter="formatDate" />
+        <el-table-column prop="createdBy" :label="t('product.createdBy')" width="120" />
+        <el-table-column prop="modifiedDate" :label="t('product.updateDate')" width="160" :formatter="formatDate" />
+        <el-table-column prop="modifiedBy" :label="t('product.modifiedBy')" width="120" />
+        <el-table-column :label="t('product.actions')" width="150" fixed="right">
           <template #default="scope">
-            <el-button type="info" :icon="View" size="small" circle @click="goToDetail(scope.row.id)" title="Chi tiết"/>
-            <el-button type="primary" :icon="Edit" size="small" circle @click="goToEdit(scope.row.id)" title="Sửa"/>
-            <el-button type="danger" :icon="Delete" size="small" circle @click="confirmDelete(scope.row.id)" title="Xóa"/>
+            <el-button type="info" :icon="View" size="small" circle @click="goToDetail(scope.row.id)" :title="t('product.detail')" />
+            <el-button type="primary" :icon="Edit" size="small" circle @click="goToEdit(scope.row.id)" :title="t('product.edit')" />
+            <el-button type="danger" :icon="Delete" size="small" circle @click="confirmDelete(scope.row.id)" :title="t('product.delete')" :loading="deleteLoading" />
           </template>
         </el-table-column>
       </el-table>
@@ -113,7 +122,7 @@
             :current-page="currentPage"
             :page-sizes="[5, 10, 20, 50]"
             :page-size="size"
-            layout="total, sizes, prev, pager, next, jumper"
+            layout="sizes, total, prev, pager, next, jumper"
             :total="totalElements"
             background
         />
@@ -124,12 +133,19 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
-import qs from 'qs';
-import { ElMessage, ElMessageBox, ElCard, ElForm, ElFormItem, ElInput, ElButton, ElDatePicker, ElRow, ElCol, ElTable, ElTableColumn, ElPagination, ElSelect, ElOption } from 'element-plus';
-import {Plus, Search, Refresh, Edit, Delete, View} from '@element-plus/icons-vue';
-import { useRouter } from "vue-router";
+import api from '@/utils/axios.js';
+import {
+  ElMessage,
+  ElMessageBox
+} from 'element-plus';
+import {
+  Plus, Search, Refresh, Edit, Delete, View, Download
+} from '@element-plus/icons-vue';
 
+const { t } = useI18n();
 const router = useRouter();
 
 const currentPage = ref(1);
@@ -138,6 +154,7 @@ const totalElements = ref(0);
 const products = ref([]);
 const categoryOptions = ref([]);
 const loading = ref(false);
+const deleteLoading = ref(false);
 
 const filters = ref({
   keyword: '',
@@ -148,52 +165,35 @@ const filters = ref({
 
 const fetchCategories = async () => {
   try {
-    const res = await axios.get('http://localhost:8080/api/categories');
+    const res = await api.get('/categories');
     categoryOptions.value = res.data || [];
   } catch (err) {
-    console.error('Lỗi lấy danh mục:', err);
-    ElMessage.error('Không thể tải danh mục.');
+    ElMessage.error(t('messages.loadFailed'));
   }
 };
 
 const fetchProducts = async () => {
   loading.value = true;
-
   const payload = {
     page: currentPage.value - 1,
     size: size.value,
+    keyword: filters.value.keyword || null,
+    createdFrom: filters.value.createdFrom || null,
+    createdTo: filters.value.createdTo || null,
+    categoryIds: filters.value.categoryId
   };
 
-  if (filters.value.keyword) {
-    payload.keyword = filters.value.keyword;
-  }
-  if (filters.value.createdFrom) {
-    payload.createdFrom = filters.value.createdFrom;
-  }
-  if (filters.value.createdTo) {
-    payload.createdTo = filters.value.createdTo;
-  }
-  if (filters.value.categoryId) {
-    payload.categoryIds = filters.value.categoryId; // Gửi categoryId dưới dạng mảng với một phần tử
-  }
-
-  console.log('Payload gửi lên:', payload);
-
   try {
-    const res = await axios.get('http://localhost:8080/api/products/search', {
-      params: payload
-    });
-
+    const res = await api.get('/products/search', { params: payload });
     products.value = res.data?.data || [];
     totalElements.value = res.data?.pagination?.totalElements ?? 0;
+
     if (products.value.length === 0 && totalElements.value > 0 && currentPage.value > 1) {
       currentPage.value = Math.max(1, Math.ceil(totalElements.value / size.value));
       await fetchProducts();
     }
-
   } catch (err) {
-    console.error('Lỗi tải danh sách sản phẩm:', err);
-    ElMessage.error('Không thể tải dữ liệu sản phẩm. Vui lòng thử lại.');
+    ElMessage.error(t('product.exportError'));
     products.value = [];
     totalElements.value = 0;
     currentPage.value = 1;
@@ -208,32 +208,35 @@ const handleSearch = () => {
 };
 
 const resetFilters = () => {
-  filters.value = { keyword: '', createdFrom: null, createdTo: null, categoryId: null };
+  filters.value = {
+    keyword: '',
+    createdFrom: null,
+    createdTo: null,
+    categoryId: null
+  };
   currentPage.value = 1;
   fetchProducts();
 };
 
-const handleSizeChange = (newSize) => {
-  size.value = newSize;
+const handleSizeChange = (val) => {
+  size.value = val;
   currentPage.value = 1;
   fetchProducts();
 };
 
-const handleCurrentChange = (newPage) => {
-  currentPage.value = newPage;
+const handleCurrentChange = (val) => {
+  currentPage.value = val;
   fetchProducts();
 };
 
-const getIndex = (index) => {
-  return index + 1 + (currentPage.value - 1) * size.value;
+const getIndex = (index) => index + 1 + (currentPage.value - 1) * size.value;
+
+const formatDate = (row, column, value) => {
+  return value ? new Date(value).toLocaleString('vi-VN') : '';
 };
 
-const formatDate = (row, column, cellValue) => {
-  return cellValue ? new Date(cellValue).toLocaleString('vi-VN') : '';
-};
-
-const formatCurrency = (row, column, cellValue) => {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(cellValue);
+const formatCurrency = (row, column, value) => {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
 };
 
 const goToAdd = () => {
@@ -250,20 +253,68 @@ const goToDetail = (id) => {
 
 const confirmDelete = async (id) => {
   try {
-    await ElMessageBox.confirm('Bạn có chắc chắn muốn xoá sản phẩm này?', 'Cảnh báo', {
-      confirmButtonText: 'Xóa',
-      cancelButtonText: 'Hủy',
-      type: 'warning'
-    });
-    await axios.delete(`http://localhost:8080/api/products/${id}`);
-    ElMessage.success('Xóa sản phẩm thành công!');
+    await ElMessageBox.confirm(
+        t('product.confirmDelete'),
+        t('action.warning'),
+        {
+          confirmButtonText: t('product.delete'),
+          cancelButtonText: t('action.cancel'),
+          type: 'warning'
+        }
+    );
+    deleteLoading.value = true;
+    await api.delete(`/products/${id}`);
+    ElMessage.success(t('product.deleteSuccess'));
     fetchProducts();
   } catch (err) {
-    if (axios.isCancel(err) || err === 'cancel') {
-      console.log('Xóa sản phẩm đã bị hủy.');
-    } else {
-      console.error('Lỗi xoá sản phẩm:', err);
-      ElMessage.error('Không thể xóa sản phẩm. Vui lòng thử lại.');
+    if (error !== 'cancel') {
+      ElMessage.error(t('product.deleteCancel'));
+    }else{
+      ElMessage.error(t('product.deleteError'));
+    }
+
+  } finally {
+    deleteLoading.value = false;
+  }
+};
+
+const exportExcel = async () => {
+  try {
+    await ElMessageBox.confirm(
+        t('product.exportConfirm'),
+        t('product.exportTitle'),
+        {
+          confirmButtonText: t('product.exportExcel'),
+          cancelButtonText: t('action.cancel'),
+          type: 'warning'
+        }
+    );
+
+    const payload = {
+      keyword: filters.value.keyword || null,
+      createdFrom: filters.value.createdFrom || null,
+      createdTo: filters.value.createdTo || null,
+      categoryIds: filters.value.categoryId,
+    };
+
+    const res = await api.post('/products/export', payload, {
+      responseType: 'blob'
+    });
+
+    const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'danh_sach_san_pham.xlsx');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    ElMessage.success(t('product.exportSuccess'));
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(t('product.exportError'));
     }
   }
 };

@@ -2,26 +2,38 @@
   <div class="container mt-5" v-loading="isPageLoading">
     <div class="mb-3">
       <button @click="goBack" class="btn btn-outline-secondary rounded-pill shadow-sm">
-        <i class="bi bi-arrow-left-circle"></i> Quay lại
+        <i class="bi bi-arrow-left-circle"></i> {{ $t('action.back') }}
       </button>
     </div>
 
-    <el-form ref="ruleForm" :model="form" :rules="rules" label-width="130px" class="bg-light p-4 rounded shadow-lg" @submit.prevent>
-      <h2 class="text-center mb-4">Cập nhật Danh Mục</h2>
+    <el-form
+        ref="ruleForm"
+        :model="form"
+        :rules="rules"
+        label-width="130px"
+        class="bg-light p-4 rounded shadow-lg"
+        @submit.prevent
+    >
+      <h2 class="text-center mb-4">{{ $t('category.updateTitle') }}</h2>
 
-      <el-form-item label="Tên danh mục" prop="categoryName">
-        <el-input v-model="form.categoryName" placeholder="Nhập tên danh mục" />
+      <el-form-item :label="$t('category.name')" prop="categoryName">
+        <el-input v-model="form.categoryName" :placeholder="$t('messages.enterName')" />
       </el-form-item>
 
-      <el-form-item label="Mã danh mục" prop="categoryCode">
-        <el-input v-model="form.categoryCode" placeholder="Nhập mã danh mục" />
+      <el-form-item :label="$t('category.code')" prop="categoryCode">
+        <el-input v-model="form.categoryCode" :placeholder="$t('messages.enterCode')" disabled />
       </el-form-item>
 
-      <el-form-item label="Mô tả" prop="description">
-        <el-input type="textarea" rows="3" v-model="form.description" placeholder="Nhập mô tả" />
+      <el-form-item :label="$t('category.description')" prop="description">
+        <el-input
+            type="textarea"
+            rows="3"
+            v-model="form.description"
+            :placeholder="$t('messages.enterDescription')"
+        />
       </el-form-item>
 
-      <el-form-item label="Hình ảnh danh mục">
+      <el-form-item :label="$t('category.images')">
         <el-upload
             action="#"
             list-type="picture-card"
@@ -33,12 +45,12 @@
             multiple
             accept="image/*"
         >
-          <el-button type="primary">Tải lên hình ảnh</el-button>
+          <el-button type="primary">{{ $t('category.selectImages') }}</el-button>
         </el-upload>
       </el-form-item>
 
       <div class="text-center mt-4">
-        <el-button type="success" @click="handleSubmit">Cập nhật danh mục</el-button>
+        <el-button type="success" @click="handleSubmit">{{ $t('category.submit') }}</el-button>
       </div>
     </el-form>
   </div>
@@ -47,10 +59,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
+import { useI18n } from 'vue-i18n'
 import { ElNotification, ElMessageBox } from 'element-plus'
-import 'element-plus/es/components/loading/style/css'
+import api from '@/utils/axios.js'
 
+const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 
@@ -61,9 +74,9 @@ const form = ref({
 })
 
 const rules = {
-  categoryName: [{ required: true, message: 'Vui lòng nhập tên danh mục', trigger: 'blur' }],
-  categoryCode: [{ required: true, message: 'Vui lòng nhập mã danh mục', trigger: 'blur' }],
-  description: [{ required: true, message: 'Vui lòng nhập mô tả', trigger: 'blur' }]
+  categoryName: [{ required: true, message: t('messages.enterName'), trigger: 'blur' }],
+  categoryCode: [{ required: true, message: t('messages.enterCode'), trigger: 'blur' }],
+  description: [{ required: true, message: t('messages.enterDescription'), trigger: 'blur' }]
 }
 
 const ruleForm = ref(null)
@@ -114,16 +127,16 @@ const handleSubmit = () => {
     const remainingImages = imageFiles.value.filter(img => !deletedImageIds.value.includes(img.id))
     if (remainingImages.length === 0) {
       ElNotification.warning({
-        title: 'Cảnh báo',
-        message: 'Vui lòng chọn ít nhất 1 ảnh danh mục.'
+        title: t('action.warning'),
+        message: t('messages.imageRequired')
       })
       return
     }
 
     try {
-      await ElMessageBox.confirm('Bạn có chắc chắn muốn cập nhật danh mục này?', 'Xác nhận', {
-        confirmButtonText: 'Xác nhận',
-        cancelButtonText: 'Hủy',
+      await ElMessageBox.confirm(t('messages.confirmUpdate'), t('action.confirm'), {
+        confirmButtonText: t('action.confirm'),
+        cancelButtonText: t('action.cancel'),
         type: 'warning'
       })
 
@@ -143,22 +156,21 @@ const handleSubmit = () => {
       })
 
       const id = route.params.id
-      await axios.put(`http://localhost:8080/api/categories/${id}`, formData, {
+      await api.put(`/categories/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
 
       ElNotification.success({
-        title: 'Thành công',
-        message: 'Cập nhật danh mục thành công!'
+        title: t('action.success'),
+        message: t('messages.updateSuccess')
       })
 
       router.push('/categories')
     } catch (error) {
       if (error !== 'cancel') {
-        console.error(error)
         ElNotification.error({
-          title: 'Lỗi',
-          message: error.response?.data?.message || 'Cập nhật thất bại!'
+          title: t('action.error'),
+          message: error.response?.data?.message || t('messages.updateFailed')
         })
       }
     }
@@ -168,7 +180,7 @@ const handleSubmit = () => {
 const loadCategory = async () => {
   try {
     const id = route.params.id
-    const res = await axios.get(`http://localhost:8080/api/categories/${id}`)
+    const res = await api.get(`/categories/${id}`)
     const data = res.data
 
     form.value = {
@@ -185,10 +197,9 @@ const loadCategory = async () => {
       file: null
     }))
   } catch (err) {
-    console.error(err)
     ElNotification.error({
-      title: 'Lỗi',
-      message: 'Không thể tải danh mục.'
+      title: t('action.error'),
+      message: t('messages.loadFailed')
     })
   } finally {
     isPageLoading.value = false

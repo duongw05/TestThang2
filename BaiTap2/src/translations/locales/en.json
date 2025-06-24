@@ -7,91 +7,179 @@
     "images": "Category Images",
     "createdBy": "Created By",
     "modifiedBy": "Modified By",
+    "createdDate": "Created Date",
+    "modifiedDate": "Modified Date",
     "submit": "Submit",
     "selectImages": "Select Images",
     "listTitle": "Category List",
-    "exportExcel": "Export to Excel",
-    "item": "item",
-    "createdDate": "Created Date",
+    "detailTitle": "Category Details",
+    "exportExcel": "Export Excel",
+    "add": "Add Category",
+    "emptyText": "No categories match the filter",
     "noImage": "No image",
     "noDescription": "No description",
     "unknown": "Unknown",
-    "detailTitle": "Category Details",
-    "emptyText": "No categories match the filter",
-    "add": "Add Category"
+    "item": "item",
+    "updateTitle": "Update Category",
+    "updateSuccess": "Category updated successfully!",
+    "updateFailed": "Category update failed!",
+    "imageRequired": "Please select at least one category image.",
+    "uploadImages": "Upload Images"
   },
-
+  "product": {
+    "listTitle": "Product List",
+    "add": "Add Product",
+    "exportExcel": "Export Excel",
+    "searchTitle": "Search Products",
+    "nameOrCode": "Product Name or Code",
+    "fromDate": "From Date",
+    "toDate": "To Date",
+    "category": "Category",
+    "productCode": "Product Code",
+    "productName": "Product Name",
+    "createDate": "Created Date",
+    "updateDate": "Modified Date",
+    "createdBy": "Created By",
+    "modifiedBy": "Modified By",
+    "price": "Price",
+    "quantity": "Quantity",
+    "description": "Description",
+    "actions": "Actions",
+    "detail": "Details",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this product?",
+    "deleteSuccess": "Product deleted successfully!",
+    "deleteCancel": "Deletion canceled",
+    "deleteError": "Unable to delete product. Please try again.",
+    "noData": "No data available",
+    "exportConfirm": "Are you sure you want to export the product list to Excel?",
+    "exportTitle": "Confirm Export",
+    "exportSuccess": "Excel exported successfully!",
+    "exportCancel": "Export canceled.",
+    "exportError": "Unable to export Excel. Please try again.",
+    "detailTitle": "Product Details",
+    "infoTitle": "Product Information",
+    "relatedCategories": "Related Categories",
+    "noDescription": "No description",
+    "noValue": "No value",
+    "images": "Product Images",
+    "imageIndex": "Image {current} / {total}",
+    "selectLabel": "Press Enter to select",
+    "deselectLabel": "Press Enter to deselect",
+    "selectedLabel": "Selected",
+    "updateTitle": "Update Product",
+    "updateSuccess": "Product updated successfully!",
+    "updateFailed": "Product update failed!",
+    "confirmUpdate": "Are you sure you want to update this product?",
+    "submitUpdate": "Update Product",
+    "selectedCategories": "Selected Categories",
+    "imageRequired": "Please upload at least one image",
+    "uploadImage": "Upload Image",
+    "loadingProduct": "Loading product data..."
+  },
   "sidebar": {
     "home": "Home",
     "productManagement": "Product Management",
     "products": "Products",
     "categories": "Categories"
   },
-
   "carousel": {
     "text1": "Hello everyone",
     "text2": "Big discounts this week! 🔥",
-    "text3": "Shop now and save more! 🛍️"
+    "text3": "Buy now and save more! 🛍️"
   },
-
-  "logout": "Logout",
-
-  "categoryList": "Category List",
-  "exportExcel": "Export to Excel",
-  "categoryName": "Category Name",
-  "categoryCode": "Category Code",
-  "fromDate": "From Date",
-  "toDate": "To Date",
-  "search": "Search",
-  "reset": "Clear Filters",
-  "noData": "No categories match the filter",
-  "status": "Status",
-  "createdDate": "Created Date",
-  "actions": "Actions",
-  "details": "Details",
-  "exportConfirm": "Do you want to export to Excel for {count} selected categories?",
-  "exportSuccess": "Export request sent with IDs: {ids}",
-  "exportCancel": "Excel export cancelled.",
-  "noSelection": "Please select at least one category to export.",
-  "detailDialogTitle": "Category Details",
-  "createdBy": "Created By",
-  "description": "Description",
-  "noDescription": "No description",
-  "noImages": "No category images",
-
-  "messages": {
-    "loadFailed": "Unable to load categories. Please try again later.",
-    "selectToExport": "Please select at least one category to export.",
-    "confirmExport": "Do you want to export to Excel for {count} selected categories?",
-    "confirmTitle": "Confirm Excel Export",
-    "exportRequested": "Export request sent with IDs: {ids}",
-    "exportCancelled": "Excel export cancelled."
+  "table": {
+    "index": "No."
   },
-
-  "action": {
-    "search": "Search",
-    "reset": "Clear Filters",
-    "details": "Details",
-    "actions": "Actions"
-  },
-
   "filter": {
     "fromDate": "From Date",
     "toDate": "To Date"
   },
-
   "placeholder": {
+    "enterKeyword": "Enter name or code",
     "enterName": "Enter name",
     "enterCode": "Enter code",
     "fromDate": "From date",
-    "toDate": "To date"
+    "toDate": "To date",
+    "enterDescription": "Enter product description",
+    "enterQuantity": "Enter quantity",
+    "enterPrice": "Enter price",
+    "selectCategory": "Select category"
   },
-
-  "table": {
-    "index": "No."
-  },
-
   "form": {
     "labelWidth": "100px"
+  },
+  "action": {
+    "search": "Search",
+    "reset": "Clear Filters",
+    "details": "Details",
+    "actions": "Actions",
+    "back": "Back",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning"
+  },
+  "messages": {
+    "enterCode": "Enter category code",
+    "enterName": "Enter category name",
+    "enterDescription": "Enter description",
+    "loadFailed": "Unable to load categories. Please try again later.",
+    "selectToExport": "Please select at least one category to export.",
+    "confirmExport": "Do you want to export Excel for {count} selected categories?",
+    "confirmTitle": "Confirm Export",
+    "exportRequested": "Export request sent for IDs: {ids}",
+    "exportCancelled": "Export cancelled.",
+    "noSelection": "Please select at least one category to export.",
+    "confirmDelete": "Are you sure you want to delete this category?",
+    "deleteSuccess": "Category deleted successfully!",
+    "deleteCancel": "Delete canceled",
+    "deleteError": "Unable to delete category. Please try again.",
+    "confirmAdd": "Are you sure you want to add this category?",
+    "addSuccess": "Added successfully",
+    "confirmUpdate": "Are you sure you want to update this category?",
+    "updateSuccess": "Category updated successfully!",
+    "updateFailed": "Category update failed!",
+    "imageRequired": "Please select at least one category image.",
+    "confirmSaveProduct": "Are you sure you want to save this product?",
+    "addProductSuccess": "Product added successfully!",
+    "addProductFailed": "Failed to add product!",
+    "validateError": "Please check the information again!",
+    "imageTooLarge": "Image {fileName} exceeds 3MB!",
+    "imageDuplicated": "Image {fileName} has already been selected!",
+    "loadProductError": "Unable to load product data!",
+    "codeMaxLength": "Maximum length is 50 characters"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "validation": {
+    "required": "This field is required",
+    "maxLength": "Maximum {max} characters",
+    "productCodeRequired": "Please enter product code",
+    "productNameRequired": "Please enter product name",
+    "productNameMax": "Product name must not exceed 200 characters",
+    "descriptionRequired": "Please enter product description",
+    "descriptionMax": "Description must not exceed 200 characters",
+    "priceRequired": "Please enter price",
+    "priceMin": "Price must be 0 or greater",
+    "quantityRequired": "Please enter quantity",
+    "quantityMin": "Quantity must be 0 or greater",
+    "categoryRequired": "Please select at least one category"
+  },
+  "loading": "Loading data...",
+  "error": {
+    "notFound": "Category not found"
+  },
+  "pagination": {
+    "total": "Total {total}",
+    "goto": "Go to",
+    "pageClassifier": "page",
+    "pagesize": "per page",
+    "prev": "Previous",
+    "next": "Next"
   }
 }
