@@ -15,11 +15,11 @@ import com.example.baitapcuoiki2.model.ProductImage;
 import com.example.baitapcuoiki2.utils.Status;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -40,105 +40,97 @@ public class ProductSearchRepository {
     private EntityManager entityManager;
 
     @Autowired
-    private ProductMapper productMapper;
-
-    @Autowired
     private PaginationMapper paginationMapper;
 
     @Autowired
     private ProductExportMapper productExportMapper;
 
     public PaginationDTO<ProductSearchResponse> searchProducts(ProductSearchRequest request, Pageable pageable) {
-        String baseSql = "FROM Product p WHERE 1=1";
-        StringBuilder whereClause = new StringBuilder(" AND p.status = :status");
-
+        String sql = """
+                 SELECT p.id, p.product_name, p.product_code, p.description, p.price,
+                 p.quantity, p.createdDate, p.modifiedDate, p.createdBy, p.modifiedBy,
+                 GROUP_CONCAT(c.category_name SEPARATOR ',') AS category_names
+                 FROM Product p
+                 LEFT JOIN ProductCategory pc ON p.id = pc.productId
+                 LEFT JOIN Category c ON c.id = pc.categoryId AND p.status = 1 and pc.status = 1
+                """;
+        StringBuilder whereClause = new StringBuilder(" WHERE p.status = :status ");
         Map<String, Object> params = new HashMap<>();
         params.put("status", Status.ACTIVE);
 
-        if (request.getKeyword() != null && !request.getKeyword().isEmpty()) {
-            whereClause.append(" AND (LOWER(p.productName) LIKE LOWER(:keyword) OR LOWER(p.productCode) LIKE LOWER(:keyword))");
+        if (request.getKeyword() != null && !request.getKeyword().isBlank()) {
+            whereClause.append(" AND (LOWER(p.product_name) LIKE LOWER(:keyword) OR LOWER(p.product_code) LIKE LOWER(:keyword)) ");
             params.put("keyword", "%" + request.getKeyword().trim() + "%");
         }
 
         if (request.getCreatedFrom() != null) {
-            whereClause.append(" AND p.createdDate >= :createdFrom");
+            whereClause.append(" AND p.createdDate >= :createdFrom ");
             params.put("createdFrom", request.getCreatedFrom());
         }
 
         if (request.getCreatedTo() != null) {
-            whereClause.append(" AND p.createdDate <= :createdTo");
+            whereClause.append(" AND p.createdDate <= :createdTo ");
             params.put("createdTo", request.getCreatedTo());
         }
 
-        if (request.getCategoryIds() != null && !request.getCategoryIds().isEmpty()) {
-            whereClause.append("""
-            AND EXISTS (
-                SELECT 1 FROM ProductCategory pc
-                WHERE pc.product = p
-                AND pc.category.id IN :categoryIds
-                AND pc.status = :status
-            )
-        """);
-            params.put("categoryIds", request.getCategoryIds());
+        if (request.getCategoryIds() != null ) {
+            whereClause.append(" AND c.id = :categoryId ");
+            params.put("categoryId", request.getCategoryIds());
         }
 
-        String dataSql = "SELECT p " + baseSql + whereClause + " ORDER BY p.id DESC";
-        TypedQuery<Product> query = entityManager.createQuery(dataSql, Product.class);
+        StringBuilder dataSql = new StringBuilder();
+        dataSql.append(sql).append(whereClause).append("""
+            GROUP BY p.id, p.product_name, p.product_code, p.description, p.price,
+                     p.quantity, p.createdDate, p.modifiedDate, p.createdBy, p.modifiedBy
+            ORDER BY p.id DESC
+            """);
+
+        if (!pageable.isUnpaged()) {
+            dataSql.append(" LIMIT :limit OFFSET :offset ");
+        }
+
+        Query query = entityManager.createNativeQuery(dataSql.toString());
         params.forEach(query::setParameter);
-        query.setFirstResult((int) pageable.getOffset());
-        query.setMaxResults(pageable.getPageSize());
-
-        List<Product> products = query.getResultList();
-
-        if (!products.isEmpty()) {
-            Set<Long> productIds = products.stream().map(Product::getId).collect(Collectors.toSet());
-
-            String productCategorySql = "SELECT pc FROM ProductCategory pc WHERE pc.product.id IN :productIds AND pc.status = :status";
-            TypedQuery<ProductCategory> productCategoryQuery = entityManager.createQuery(productCategorySql, ProductCategory.class);
-            productCategoryQuery.setParameter("productIds", productIds);
-            productCategoryQuery.setParameter("status", Status.ACTIVE);
-            System.out.println("status: "+Status.ACTIVE);
-            List<ProductCategory> productCategories = productCategoryQuery.getResultList();
-
-            Set<Long> categoryIds = productCategories.stream()
-                    .map(pc -> pc.getCategory().getId())
-                    .collect(Collectors.toSet());
-
-            List<Category> categories = new ArrayList<>();
-            if (!categoryIds.isEmpty()) {
-                System.out.println("categoryId; "+categoryIds);
-                String categorySql = "SELECT c FROM Category c WHERE c.id IN :categoryIds";
-                TypedQuery<Category> categoryQuery = entityManager.createQuery(categorySql, Category.class);
-                categoryQuery.setParameter("categoryIds", categoryIds);
-                categories = categoryQuery.getResultList();
-            }
-
-            Map<Long, Category> categoryMap = categories.stream()
-                    .collect(Collectors.toMap(Category::getId, c -> c));
-            for (ProductCategory pc : productCategories) {
-                pc.setCategory(categoryMap.get(pc.getCategory().getId()));
-            }
-
-            Map<Long, List<ProductCategory>> productCategoriesMap = productCategories.stream()
-                    .collect(Collectors.groupingBy(pc -> pc.getProduct().getId()));
-
-            for (Product product : products) {
-                product.setProductCategories(productCategoriesMap.getOrDefault(product.getId(), new ArrayList<>()));
-            }
+        if (!pageable.isUnpaged()) {
+            query.setParameter("limit", pageable.getPageSize());
+            query.setParameter("offset", pageable.getOffset());
         }
 
-        String countSql = "SELECT COUNT(p) " + baseSql + whereClause;
-        TypedQuery<Long> countQuery = entityManager.createQuery(countSql, Long.class);
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = query.getResultList();
+
+        List<ProductSearchResponse> results = rows.stream().map(row -> {
+            ProductSearchResponse dto = new ProductSearchResponse();
+            dto.setId(((Number) row[0]).longValue());
+            dto.setProductName((String) row[1]);
+            dto.setProductCode((String) row[2]);
+            dto.setDescription((String) row[3]);
+            dto.setPrice(row[4] != null ? ((Number) row[4]).doubleValue() : null);
+            dto.setQuantity(row[5] != null ? ((Number) row[5]).longValue() : null);
+            dto.setCreatedDate((Date) row[6]);
+            dto.setModifiedDate((Date) row[7]);
+            dto.setCreatedBy((String) row[8]);
+            dto.setModifiedBy((String) row[9]);
+            dto.setCategoryNames(row[10] != null ? List.of(((String) row[10]).split(",")) : List.of());
+            return dto;
+        }).toList();
+
+        String countSql = """
+        SELECT COUNT(DISTINCT p.id)
+        FROM Product p
+        LEFT JOIN ProductCategory pc ON p.id = pc.productId
+        LEFT JOIN Category c ON c.id = pc.categoryId AND p.status = 1 and pc.status = 1
+    """ + whereClause;
+
+        Query countQuery = entityManager.createNativeQuery(countSql);
         params.forEach(countQuery::setParameter);
-        Long total = countQuery.getSingleResult();
+        long total = ((Number) countQuery.getSingleResult()).longValue();
 
-        List<ProductSearchResponse> responses = productMapper.toProductSearchResponses(products);
-        Page<ProductSearchResponse> page = new PageImpl<>(responses, pageable, total);
-
+        Page<ProductSearchResponse> page = new PageImpl<>(results, pageable, total);
         return paginationMapper.toPaginationDTO(page);
     }
 
-    public List<ProductExportResponse> searchProductWithoutPaging(ProductSearchRequest dto) {
+    public List<ProductExportResponse> timKiemXuatExcelSanPham(ProductSearchRequest dto) {
         Pageable pageable = Pageable.unpaged();
 
         PaginationDTO<ProductSearchResponse> resultWrapper = searchProducts(dto, pageable);
@@ -151,4 +143,5 @@ public class ProductSearchRepository {
 
         return exportResponses;
     }
+
 }

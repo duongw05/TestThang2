@@ -18,19 +18,9 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 """)
     Optional<Product> getOneByStatus(@Param("id") Long productId, @Param("status") Status status);
 
-    @Query("""
-    SELECT DISTINCT p FROM Product p
-    LEFT JOIN FETCH p.productImages
-    WHERE p.id = :id AND p.status = :status
-    """)
-    Optional<Product> findActiveProductWithImages(@Param("id") Long id, @Param("status") Status status);
+    @Query("SELECT p FROM Product p WHERE p.id = :id AND p.status = :status")
+    Optional<Product> findByIdAndStatus(@Param("id") Long id, @Param("status") Status status);
 
-    @Query("""
-    SELECT DISTINCT p FROM Product p
-    LEFT JOIN FETCH p.productImages
-    WHERE p.status = :status
-    """)
-    List<Product> findAllActiveProductsWithImages(@Param("status") Status status);
 
     @Query("SELECT COUNT(p.id) > 0 FROM Product p WHERE p.productCode = :productCode AND p.status = :status")
     boolean existsActiveProductCode(@Param("productCode") String productCode,@Param("status") Status status);

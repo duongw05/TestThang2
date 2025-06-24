@@ -9,7 +9,7 @@ public interface PaginationMapper {
     default <T> PaginationDTO<T> toPaginationDTO(Page<T> page) {
         return new PaginationDTO<>(
                 page.getContent(),
-                page.getNumber() + 1, // page number starts from 0, convert to 1-based
+                page.getNumber() + 1,
                 page.getSize(),
                 page.getTotalElements(),
                 page.getTotalPages(),

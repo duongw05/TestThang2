@@ -138,25 +138,25 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex) {
-//
-//        System.out.println("chạy vào handleAllExceptions");
-//
-//        Locale locale = LocaleContextHolder.getLocale();
-//        String message = messageSource.getMessage("internal.server.error", null, locale);
-//
-//        Map<String, String> errors = new HashMap<>();
-//        errors.put("message", ex.getMessage() != null ? ex.getMessage() : message);
-//
-//        ErrorResponse response = new ErrorResponse(
-//                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-//                message,
-//                new Date(),
-//                errors
-//        );
-//        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex) {
+
+        System.out.println("chạy vào handleAllExceptions");
+
+        Locale locale = LocaleContextHolder.getLocale();
+        String message = messageSource.getMessage("internal.server.error", null, locale);
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", ex.getMessage() != null ? ex.getMessage() : message);
+
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                message,
+                new Date(),
+                errors
+        );
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {

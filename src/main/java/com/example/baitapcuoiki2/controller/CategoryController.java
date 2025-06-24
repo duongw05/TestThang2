@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -43,7 +42,6 @@ import java.util.List;
 @RequestMapping("/api/categories")
 @RequiredArgsConstructor
 public class CategoryController {
-    private static final Logger log = LoggerFactory.getLogger(CategoryController.class);
     private final CategoryService categoryService;
     private final MessageSource messageSource;
     private final Validator validator;
@@ -105,17 +103,12 @@ public class CategoryController {
     }
 
     @PostMapping("/export")
-    public void exportExcel(@RequestBody CategorySearchRequest dto, HttpServletResponse response) {
+    public void exportExcel(@RequestBody CategorySearchRequest dto, HttpServletResponse response) throws IOException {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=categories.xlsx");
 
-        try (OutputStream out = response.getOutputStream()) {
-            categoryService.exportCategoriesToExcel(dto, out);
-            response.flushBuffer();
-        } catch (IOException e) {
-            log.error("Export Excel failed: {}", e.getMessage(), e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+        categoryService.exportCategoriesToExcel(dto, response.getOutputStream());
+        response.flushBuffer();
     }
 
 }

@@ -82,7 +82,7 @@ public class CategorySearchRepository {
         return paginationMapper.toPaginationDTO(page);
     }
 
-    public List<CategoryExportResponse> searchCategoriesWithoutPaging(CategorySearchRequest dto) {
+    public List<CategoryExportResponse> timKiemXuatExcelDanhMuc(CategorySearchRequest dto) {
         Pageable pageable = Pageable.unpaged();
 
         PaginationDTO<CategorySearchResponse> resultWrapper = searchCategories(dto, pageable);

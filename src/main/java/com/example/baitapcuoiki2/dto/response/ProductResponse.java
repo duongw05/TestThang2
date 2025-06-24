@@ -26,4 +26,5 @@ public class ProductResponse {
     private String modifiedBy;
     private List<CategoryResponse> categories;
     private List<ProductImageResponse> productImages;
+
 }

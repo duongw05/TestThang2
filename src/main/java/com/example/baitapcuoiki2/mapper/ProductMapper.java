@@ -23,6 +23,7 @@ public interface ProductMapper {
     @Mapping(target = "id", ignore = true)
     Product toEntity(ProductRequest request);
 
+    @Mapping(target = "productImages", source = "productImages")
     ProductResponse toResponse(Product product);
 
     @Mapping(source = "productCategories", target = "categoryNames", qualifiedByName = "mapCategoryNames")

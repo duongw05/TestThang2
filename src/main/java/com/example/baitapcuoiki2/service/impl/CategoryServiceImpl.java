@@ -154,48 +154,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void exportCategoriesToExcel(CategorySearchRequest dto, OutputStream outputStream) throws IOException {
-        if (dto == null) {
-            String errorMessage = messageSource.getMessage("error.categorySearchRequest.null", null, LocaleContextHolder.getLocale());
-            throw new IllegalArgumentException(errorMessage);
-        }
-        if (outputStream == null) {
-            String errorMessage = messageSource.getMessage("error.outputStream.null", null, LocaleContextHolder.getLocale());
-            throw new IllegalArgumentException(errorMessage);
-        }
-
-        List<CategoryExportResponse> exportData = null;
-        try {
-            exportData = categorySearchRepository.searchCategoriesWithoutPaging(dto);
-        } catch (Exception e) {
-            String errorMessage = messageSource.getMessage("error.categoryData.fetch", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale());
-            throw new IOException(errorMessage, e);
-        }
+        List<CategoryExportResponse> exportData = categorySearchRepository.timKiemXuatExcelDanhMuc(dto);
 
         if (exportData == null || exportData.isEmpty()) {
-            String errorMessage = messageSource.getMessage("error.noCategoryData.found", null, LocaleContextHolder.getLocale());
-            throw new IOException(errorMessage);
+            String msg = messageSource.getMessage("error.noCategoryData.found", null, LocaleContextHolder.getLocale());
+            throw new IOException(msg);
         }
 
-        ByteArrayInputStream excelStream = null;
-        try {
-            excelStream = CategoryExcelExporter.exportCategoryToExcel(exportData);
-            if (excelStream == null) {
-                String errorMessage = messageSource.getMessage("error.excelCreation.failed", null, LocaleContextHolder.getLocale());
-                throw new IOException(errorMessage);
-            }
+        try (ByteArrayInputStream excelStream = CategoryExcelExporter.exportCategoryToExcel(exportData)) {
             outputStream.write(excelStream.readAllBytes());
-        } catch (IOException e) {
-            String errorMessage = messageSource.getMessage("error.categoryData.export", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale());
-            throw new IOException(errorMessage, e);
-        } finally {
-            if (excelStream != null) {
-                try {
-                    excelStream.close();
-                } catch (IOException e) {
-                    String errorMessage = messageSource.getMessage("error.excelStream.close.failed", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale());
-                    System.err.println(errorMessage);
-                }
-            }
         }
     }
 

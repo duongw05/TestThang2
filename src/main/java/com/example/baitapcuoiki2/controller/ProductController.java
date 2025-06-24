@@ -35,12 +35,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductController {
-    private static final Logger log = LoggerFactory.getLogger(ProductController.class);
     private final ProductService productService;
     private final MessageSource messageSource;
     private final Validator validator;
@@ -71,7 +71,7 @@ public class ProductController {
                 null,
                 LocaleContextHolder.getLocale()
         );
-        com.example.baitapcuoiki2.exception.ErrorResponse response = new com.example.baitapcuoiki2.exception.ErrorResponse(
+        ErrorResponse response = new com.example.baitapcuoiki2.exception.ErrorResponse(
                 200,
                 successMessage,
                 new Date(),
@@ -84,9 +84,9 @@ public class ProductController {
     @GetMapping("/search")
     public ResponseEntity<PaginationDTO<ProductSearchResponse>> searchProducts(
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Date createdFrom,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Date createdFrom,
             @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Date createdTo,
-            @RequestParam(required = false) List<Long> categoryIds,
+            @RequestParam(required = false) Long categoryIds,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -106,19 +106,13 @@ public class ProductController {
     }
 
 
-    @PostMapping ("/export")
-    public void exportExcel(@RequestBody ProductSearchRequest dto, HttpServletResponse response) {
-        try {
-            System.out.println("keyword: "+dto.getKeyword());
-            System.out.println("createdFrom: "+dto.getCreatedFrom());
+    @PostMapping("/export")
+    public void exportExcel(@RequestBody ProductSearchRequest dto, HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=danhsachsanpham.xlsx");
 
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment; filename=categories.xlsx");
-            productService.exportProductToExcel(dto, response.getOutputStream());
-            response.flushBuffer();
-        } catch (IOException e) {
-            log.error("Xuất Excel thất bại: {}", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+        productService.exportProductToExcel(dto, response.getOutputStream());
+        response.flushBuffer();
     }
+
 }

@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Where;
 
 import java.time.Instant;
 import java.util.Date;
@@ -31,6 +32,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@Where(clause = "status = 1")
 public class ProductImage extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

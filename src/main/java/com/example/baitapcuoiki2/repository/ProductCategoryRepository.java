@@ -32,13 +32,6 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
     List<CategoryResponse> findActiveCategoryResponsesByProductId(@Param("productId") Long productId,
                                                                   @Param("status") Status status);
 
-    @Query("""
-    SELECT pc FROM ProductCategory pc
-    JOIN FETCH pc.category
-    WHERE pc.product.id IN :productIds AND pc.status = :status
-    """)
-    List<ProductCategory> findByProductIds(@Param("productIds") List<Long> productIds, @Param("status") Status status);
-
     Optional<ProductCategory> findByProductIdAndCategoryIdAndStatus(Long productId, Long categoryId, Status status);
 
 }

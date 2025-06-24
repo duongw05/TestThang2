@@ -61,9 +61,6 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse createProduct(ProductRequest request) {
         Product product = productMapper.toEntity(request);
         product.setStatus(Status.ACTIVE);
-        product.setCreatedDate(new Date());
-        product.setModifiedBy("admin");
-        product.setCreatedBy("admin");
 
         if (request.getProductImages() != null && !request.getProductImages().isEmpty()) {
             List<ProductImage> imageList = request.getProductImages().stream().map(file -> {
@@ -72,10 +69,7 @@ public class ProductServiceImpl implements ProductService {
                     image.setImage(file.getBytes());
                     image.setImageName(file.getOriginalFilename());
                     image.setStatus(Status.ACTIVE);
-                    image.setCreatedDate(new Date());
-                    image.setCreatedBy("admin");
-                    image.setModifiedBy("admin");
-                    image.setProduct(product); // để cascade hoạt động
+                    image.setProduct(product);
                     return image;
                 } catch (IOException e) {
                     throw new RuntimeException(messageSource.getMessage(
@@ -110,9 +104,6 @@ public class ProductServiceImpl implements ProductService {
             pc.setProduct(savedProduct);
             pc.setCategory(category);
             pc.setStatus(Status.ACTIVE);
-            pc.setCreatedBy("admin");
-            pc.setCreatedDate(new Date());
-            pc.setModifiedDate(new Date());
             return pc;
         }).collect(Collectors.toList());
 
@@ -127,36 +118,23 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(rollbackFor = Throwable.class)
     @Override
     public ProductResponse updateProduct(Long id, ProductRequest request) {
-        Product existingProduct = productRepository.getOneByStatus(id,Status.ACTIVE)
-                .orElseThrow(() -> new RuntimeException(
-                        messageSource.getMessage("product.not.found", new Object[]{id}, LocaleContextHolder.getLocale())
-                ));
+        Product existingProduct = productRepository.getOneByStatus(id, Status.ACTIVE)
+                .orElseThrow(() -> new RuntimeException( messageSource.getMessage("product.not.found", new Object[]{id}, LocaleContextHolder.getLocale())));
 
         productMapper.updateProductFromRequest(request, existingProduct);
-        existingProduct.setModifiedDate(new Date());
-        existingProduct.setModifiedBy("admin");
 
         if (request.getOldImageIds() != null && !request.getOldImageIds().isEmpty()) {
             List<ProductImage> allImages = productImageRepository.findAllById(request.getOldImageIds());
-
             List<Long> invalidImageIds = request.getOldImageIds().stream()
                     .filter(idImage -> allImages.stream()
-                            .noneMatch(img -> img.getId().equals(idImage) && !"0".equals(img.getStatus())))
-                    .collect(Collectors.toList());
-
+                            .noneMatch(img -> img.getId().equals(idImage) && img.getStatus() != Status.INACTIVE))
+                    .toList();
             if (!invalidImageIds.isEmpty()) {
-                throw new RuntimeException(messageSource.getMessage(
-                        "error.image.not-found",
-                        new Object[]{invalidImageIds},
-                        LocaleContextHolder.getLocale()
-                ));
+                throw new RuntimeException(messageSource.getMessage("error.image.not-found", new Object[]{invalidImageIds}, LocaleContextHolder.getLocale()));
             }
-
-            for (ProductImage image : allImages) {
+            allImages.forEach(image -> {
                 image.setStatus(Status.INACTIVE);
-                image.setModifiedDate(new Date());
-                image.setModifiedBy("admin");
-            }
+            });
         }
 
         if (request.getProductImages() != null && !request.getProductImages().isEmpty()) {
@@ -166,9 +144,6 @@ public class ProductServiceImpl implements ProductService {
                     newImage.setImage(file.getBytes());
                     newImage.setImageName(file.getOriginalFilename());
                     newImage.setStatus(Status.ACTIVE);
-                    newImage.setCreatedDate(new Date());
-                    newImage.setCreatedBy("admin");
-                    newImage.setModifiedBy("admin");
                     newImage.setProduct(existingProduct);
 
                     existingProduct.getProductImages().add(newImage);
@@ -179,83 +154,45 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        List<ProductCategory> existingCategories = productCategoryRepository.getAllByProductAndStatus(id,Status.ACTIVE);
-
-        List<Long> categoryIds = existingCategories.stream()
+        List<ProductCategory> existingCategories = productCategoryRepository.getAllByProductAndStatus(id, Status.ACTIVE);
+        Set<Long> existingCategoryIds = existingCategories.stream()
                 .map(pc -> pc.getCategory().getId())
-                .distinct()
-                .toList();
+                .collect(Collectors.toSet());
 
-        List<Category> categories = categoryIds.isEmpty() ?
-                Collections.emptyList() :
-                categoryRepository.findCategoriesByIds(categoryIds);
+        Set<Long> newCategoryIds = request.getCategories() != null ? new HashSet<>(request.getCategories()) : existingCategoryIds;
+        Set<Category> finalCategories = new HashSet<>();
 
-        if (categories.isEmpty()) {
-            throw new RuntimeException(messageSource.getMessage(
-                    "error.category.not-found",
-                    null,
-                    LocaleContextHolder.getLocale()
-            ));
-        }
-
+        List<Category> categories = categoryRepository.findAllByIdInAndStatus(new ArrayList<>(newCategoryIds), Status.ACTIVE);
         Map<Long, Category> categoryMap = categories.stream()
                 .collect(Collectors.toMap(Category::getId, c -> c));
 
         for (ProductCategory pc : existingCategories) {
-            pc.setCategory(categoryMap.get(pc.getCategory().getId()));
+            Long categoryId = pc.getCategory().getId();
+            if (newCategoryIds.contains(categoryId)) {
+                finalCategories.add(pc.getCategory());
+            } else {
+                pc.setStatus(Status.INACTIVE);
+            }
         }
 
-        Set<Category> finalCategories = new HashSet<>();
+        for (Long categoryId : newCategoryIds) {
+            if (!existingCategoryIds.contains(categoryId)) {
+                Category category = categoryMap.get(categoryId);
+                if (category == null) continue;
 
-        if (request.getCategories() == null || request.getCategories().isEmpty()) {
-            for (ProductCategory pc : existingCategories) {
-                finalCategories.add(pc.getCategory());
-            }
-        } else {
-            Set<Long> newCategoryIds = new HashSet<>(request.getCategories());
+                Optional<ProductCategory> softDeleted = productCategoryRepository
+                        .findByProductIdAndCategoryIdAndStatus(id, categoryId, Status.INACTIVE);
 
-            for (ProductCategory pc : existingCategories) {
-                Long categoryId = pc.getCategory().getId();
-                if (!newCategoryIds.contains(categoryId)) {
-                    pc.setStatus(Status.ACTIVE);
-                    pc.setModifiedDate(new Date());
-                    pc.setModifiedBy("admin");
-                } else {
-                    finalCategories.add(pc.getCategory());
-                }
-            }
-
-            List<Category> newCategories = categoryRepository.findAllByIdInAndStatus(new ArrayList<>(newCategoryIds), Status.ACTIVE);
-
-            for (Category newCat : newCategories) {
-                boolean exists = existingCategories.stream()
-                        .anyMatch(pc -> pc.getCategory().getId().equals(newCat.getId()));
-
-                if (!exists) {
-                    Optional<ProductCategory> softDeleted = productCategoryRepository
-                            .findByProductIdAndCategoryIdAndStatus(id, newCat.getId(), Status.INACTIVE);
-
-                    if (softDeleted.isPresent()) {
-                        ProductCategory pc = softDeleted.get();
-                        pc.setStatus(Status.ACTIVE);
-                        pc.setModifiedDate(new Date());
-                        pc.setModifiedBy("admin");
-                    } else {
-                        ProductCategory pc = new ProductCategory();
-                        pc.setId(new ProductCategoryId(existingProduct.getId(), newCat.getId()));
-                        pc.setProduct(existingProduct);
-                        pc.setCategory(newCat);
-                        pc.setStatus(Status.ACTIVE);
-                        pc.setCreatedDate(new Date());
-                        pc.setModifiedDate(new Date());
-                        pc.setCreatedBy("admin");
-                        pc.setModifiedBy("admin");
-
-                        productCategoryRepository.save(pc);
-                    }
-
-                    finalCategories.add(newCat);
-                }
+                ProductCategory pc = softDeleted.orElseGet(() -> {
+                    ProductCategory newPc = new ProductCategory();
+                    newPc.setId(new ProductCategoryId(id, categoryId));
+                    newPc.setProduct(existingProduct);
+                    newPc.setCategory(category);
+                    return newPc;
+                });
+                pc.setStatus(Status.ACTIVE);
+                productCategoryRepository.save(pc);
+                finalCategories.add(category);
             }
         }
 
@@ -268,6 +205,7 @@ public class ProductServiceImpl implements ProductService {
 
         return response;
     }
+
     @Transactional
     @Override
     public void deleteProduct(Long id) {
@@ -276,16 +214,12 @@ public class ProductServiceImpl implements ProductService {
                         messageSource.getMessage("product.not.found", new Object[]{id}, LocaleContextHolder.getLocale())
                 ));
 
-        product.setStatus(Status.ACTIVE);
-        product.setModifiedDate(new Date());
-        product.setModifiedBy("admin");
+        product.setStatus(Status.INACTIVE);
 
         List<ProductImage> productImages = product.getProductImages();
         if (productImages != null && !productImages.isEmpty()) {
             productImages.forEach(image -> {
                 image.setStatus(Status.INACTIVE);
-                image.setModifiedDate(new Date());
-                image.setModifiedBy("admin");
             });
         }
 
@@ -293,8 +227,6 @@ public class ProductServiceImpl implements ProductService {
         if (!productCategories.isEmpty()) {
             productCategories.forEach(pc -> {
                 pc.setStatus(Status.INACTIVE);
-                pc.setModifiedDate(new Date());
-                pc.setModifiedBy("admin");
             });
         }
 
@@ -309,7 +241,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse getProductById(Long id) {
-        Product product = productRepository.findActiveProductWithImages(id,Status.ACTIVE)
+        Product product = productRepository.findByIdAndStatus(id,Status.ACTIVE)
                 .orElseThrow(() -> new RuntimeException(messageSource.getMessage("product.not.found", new Object[]{id}, LocaleContextHolder.getLocale())
                 ));
 
@@ -328,51 +260,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void exportProductToExcel(ProductSearchRequest dto, OutputStream outputStream) throws IOException {
-        // Kiểm tra đầu vào
-        if (dto == null) {
-            String errorMessage = messageSource.getMessage("error.productSearchRequest.null", null, LocaleContextHolder.getLocale());
-            throw new IllegalArgumentException(errorMessage);
-        }
-        if (outputStream == null) {
-            String errorMessage = messageSource.getMessage("error.outputStream.null", null, LocaleContextHolder.getLocale());
-            throw new IllegalArgumentException(errorMessage);
-        }
-
-        List<ProductExportResponse> exportData = null;
-        try {
-            exportData = productSearchRepository.searchProductWithoutPaging(dto);
-        } catch (Exception e) {
-            String errorMessage = messageSource.getMessage("error.productData.fetch", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale());
-            throw new IOException(errorMessage, e);
-        }
+        List<ProductExportResponse> exportData = productSearchRepository.timKiemXuatExcelSanPham(dto);
 
         if (exportData == null || exportData.isEmpty()) {
-            String errorMessage = messageSource.getMessage("error.noProductData.found", null, LocaleContextHolder.getLocale());
-            throw new IOException(errorMessage);
+            String msg = messageSource.getMessage("error.noProductData.found", null, LocaleContextHolder.getLocale());
+            throw new IOException(msg);
         }
 
-        System.out.println("list sau tìm kiếm: " + exportData.size());
-
-        ByteArrayInputStream excelStream = null;
-        try {
-            excelStream = ProductExcelExporter.exportProductToExcel(exportData);
-            if (excelStream == null) {
-                String errorMessage = messageSource.getMessage("error.excelCreation.failed", null, LocaleContextHolder.getLocale());
-                throw new IOException(errorMessage);
-            }
+        try (ByteArrayInputStream excelStream = ProductExcelExporter.exportProductToExcel(exportData)) {
             outputStream.write(excelStream.readAllBytes());
-        } catch (IOException e) {
-            String errorMessage = messageSource.getMessage("error.productData.export", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale());
-            throw new IOException(errorMessage, e);
-        } finally {
-            if (excelStream != null) {
-                try {
-                    excelStream.close();
-                } catch (IOException e) {
-                    String errorMessage = messageSource.getMessage("error.excelStream.close.failed", new Object[]{e.getMessage()}, LocaleContextHolder.getLocale());
-                    System.err.println(errorMessage);
-                }
-            }
         }
     }
+
 }

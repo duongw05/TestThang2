@@ -32,7 +32,7 @@ public class ProductSearchRequest {
     @PastOrPresent(message = "{createdTo.pastOrPresent}")
     private Date createdTo;
 
-    private List<Long> categoryIds;
+    private Long categoryIds;
 
     @Min(value = 0, message = "{pagination.page.min}")
     private Integer page ;
