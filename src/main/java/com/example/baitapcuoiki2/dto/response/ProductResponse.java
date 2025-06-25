@@ -24,7 +24,7 @@ public class ProductResponse {
     private Date modifiedDate;
     private String createdBy;
     private String modifiedBy;
-    private List<CategoryResponse> categories;
+    private List<CategorySearchResponse> categories;
     private List<ProductImageResponse> productImages;
 
 }

@@ -32,7 +32,6 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Where(clause = "status = 1")
 public class ProductImage extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

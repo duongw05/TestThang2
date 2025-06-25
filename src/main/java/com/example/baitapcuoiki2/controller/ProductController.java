@@ -105,7 +105,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.searchProducts(request, pageable));
     }
 
-
     @PostMapping("/export")
     public void exportExcel(@RequestBody ProductSearchRequest dto, HttpServletResponse response) throws IOException {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

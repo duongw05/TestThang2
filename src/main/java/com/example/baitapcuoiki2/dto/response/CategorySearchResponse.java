@@ -1,5 +1,6 @@
 package com.example.baitapcuoiki2.dto.response;
 
+import com.example.baitapcuoiki2.utils.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class CategorySearchResponse {
     private String categoryCode;
     private String categoryName;
     private String description;
+    private Status status;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Date createdDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")

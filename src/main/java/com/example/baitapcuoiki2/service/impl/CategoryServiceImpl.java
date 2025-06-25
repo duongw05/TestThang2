@@ -11,6 +11,7 @@ import com.example.baitapcuoiki2.exportExcel.CategoryExcelExporter;
 import com.example.baitapcuoiki2.mapper.CategoryMapper;
 import com.example.baitapcuoiki2.model.Category;
 import com.example.baitapcuoiki2.model.CategoryImage;
+import com.example.baitapcuoiki2.repository.CategoryImageRepository;
 import com.example.baitapcuoiki2.repository.CategoryRepository;
 import com.example.baitapcuoiki2.repository.CategorySearchRepository;
 import com.example.baitapcuoiki2.service.CategoryService;
@@ -37,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final CategorySearchRepository categorySearchRepository;
-
+    private final CategoryImageRepository categoryImageRepository;
     private final MessageSource messageSource;
 
     @Transactional(rollbackFor = Throwable.class, isolation = Isolation.SERIALIZABLE)
@@ -90,12 +91,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void deleteCategory(Long id) {
-        Category category = categoryRepository.findCategoriesByStatus(id,Status.ACTIVE)
-                .orElseThrow(() -> new NotFoundException( messageSource.getMessage("error.category.not.found", new Object[]{id}, LocaleContextHolder.getLocale())
-                ));
-
-        category.setStatus(Status.INACTIVE);
-        categoryRepository.save(category);
+        int updated = categoryRepository.softDeleteCategory(id, Status.INACTIVE, Status.ACTIVE);
+        if (updated == 0) {
+            throw new NotFoundException(
+                    messageSource.getMessage("error.category.not.found", new Object[]{id}, LocaleContextHolder.getLocale()));
+        }
+        categoryImageRepository.softDeleteCategoryImages(id, Status.INACTIVE, Status.ACTIVE);
     }
 
     @Transactional(rollbackFor = Throwable.class)

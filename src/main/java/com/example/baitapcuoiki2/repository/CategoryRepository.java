@@ -5,6 +5,7 @@ import com.example.baitapcuoiki2.model.Category;
 import com.example.baitapcuoiki2.utils.Status;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -44,5 +45,12 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
 
     @Query("SELECT c FROM Category c WHERE c.id IN :categoryIds")
     List<Category> findCategoriesByIds(@Param("categoryIds") List<Long> categoryIds);
+
+    @Modifying
+    @Query("UPDATE Category c SET c.status = :status WHERE c.id = :id AND c.status = :currentStatus")
+    int softDeleteCategory(@Param("id") Long id,
+                           @Param("status") Status newStatus,
+                           @Param("currentStatus") Status currentStatus);
+
 
 }

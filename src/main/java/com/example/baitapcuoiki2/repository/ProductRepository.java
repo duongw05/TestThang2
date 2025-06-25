@@ -3,6 +3,7 @@ package com.example.baitapcuoiki2.repository;
 import com.example.baitapcuoiki2.model.Product;
 import com.example.baitapcuoiki2.utils.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,11 +19,18 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 """)
     Optional<Product> getOneByStatus(@Param("id") Long productId, @Param("status") Status status);
 
-    @Query("SELECT p FROM Product p WHERE p.id = :id AND p.status = :status")
+    @Query("SELECT p FROM Product p left join fetch p .productImages pi WHERE p.id = :id AND p.status = :status AND (pi IS NULL OR pi.status = :status) ")
     Optional<Product> findByIdAndStatus(@Param("id") Long id, @Param("status") Status status);
 
 
     @Query("SELECT COUNT(p.id) > 0 FROM Product p WHERE p.productCode = :productCode AND p.status = :status")
     boolean existsActiveProductCode(@Param("productCode") String productCode,@Param("status") Status status);
+
+    @Modifying
+    @Query("UPDATE Product p SET p.status = :status WHERE p.id = :productId AND p.status = :currentStatus")
+    int softDeleteProduct(@Param("productId") Long productId,
+                          @Param("status") Status status,
+                          @Param("currentStatus") Status currentStatus);
+
 
 }

@@ -3,6 +3,7 @@ package com.example.baitapcuoiki2.service.impl;
 import com.example.baitapcuoiki2.dto.request.ProductRequest;
 import com.example.baitapcuoiki2.dto.request.ProductSearchRequest;
 import com.example.baitapcuoiki2.dto.response.CategoryResponse;
+import com.example.baitapcuoiki2.dto.response.CategorySearchResponse;
 import com.example.baitapcuoiki2.dto.response.PaginationDTO;
 import com.example.baitapcuoiki2.dto.response.ProductExportResponse;
 import com.example.baitapcuoiki2.dto.response.ProductResponse;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -110,7 +112,7 @@ public class ProductServiceImpl implements ProductService {
         productCategoryRepository.saveAll(productCategories);
 
         ProductResponse response = productMapper.toResponse(savedProduct);
-        response.setCategories(categories.stream().map(categoryMapper::toResponse).collect(Collectors.toList()));
+        response.setCategories(categories.stream().map(categoryMapper::toSearchResponse).collect(Collectors.toList()));
 
         return response;
     }
@@ -119,7 +121,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse updateProduct(Long id, ProductRequest request) {
         Product existingProduct = productRepository.getOneByStatus(id, Status.ACTIVE)
-                .orElseThrow(() -> new RuntimeException( messageSource.getMessage("product.not.found", new Object[]{id}, LocaleContextHolder.getLocale())));
+                .orElseThrow(() -> new RuntimeException(
+                        messageSource.getMessage("product.not.found", new Object[]{id}, LocaleContextHolder.getLocale())));
 
         productMapper.updateProductFromRequest(request, existingProduct);
 
@@ -130,11 +133,10 @@ public class ProductServiceImpl implements ProductService {
                             .noneMatch(img -> img.getId().equals(idImage) && img.getStatus() != Status.INACTIVE))
                     .toList();
             if (!invalidImageIds.isEmpty()) {
-                throw new RuntimeException(messageSource.getMessage("error.image.not-found", new Object[]{invalidImageIds}, LocaleContextHolder.getLocale()));
+                throw new RuntimeException(messageSource.getMessage(
+                        "error.image.not-found", new Object[]{invalidImageIds}, LocaleContextHolder.getLocale()));
             }
-            allImages.forEach(image -> {
-                image.setStatus(Status.INACTIVE);
-            });
+            allImages.forEach(image -> image.setStatus(Status.INACTIVE));
         }
 
         if (request.getProductImages() != null && !request.getProductImages().isEmpty()) {
@@ -175,32 +177,34 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
+        List<ProductCategory> softDeletedList = productCategoryRepository
+                .findAllSoftDeletedCategories(id, new ArrayList<>(newCategoryIds), Status.INACTIVE);
+
+        Map<Long, ProductCategory> softDeletedMap = softDeletedList.stream()
+                .collect(Collectors.toMap(pc -> pc.getCategory().getId(), Function.identity()));
+
         for (Long categoryId : newCategoryIds) {
             if (!existingCategoryIds.contains(categoryId)) {
                 Category category = categoryMap.get(categoryId);
                 if (category == null) continue;
 
-                Optional<ProductCategory> softDeleted = productCategoryRepository
-                        .findByProductIdAndCategoryIdAndStatus(id, categoryId, Status.INACTIVE);
-
-                ProductCategory pc = softDeleted.orElseGet(() -> {
-                    ProductCategory newPc = new ProductCategory();
-                    newPc.setId(new ProductCategoryId(id, categoryId));
-                    newPc.setProduct(existingProduct);
-                    newPc.setCategory(category);
-                    return newPc;
-                });
+                ProductCategory pc = softDeletedMap.get(categoryId);
+                if (pc == null) {
+                    pc = new ProductCategory();
+                    pc.setId(new ProductCategoryId(id, categoryId));
+                    pc.setProduct(existingProduct);
+                    pc.setCategory(category);
+                }
                 pc.setStatus(Status.ACTIVE);
                 productCategoryRepository.save(pc);
                 finalCategories.add(category);
             }
         }
-
         productRepository.save(existingProduct);
 
         ProductResponse response = productMapper.toResponse(existingProduct);
         response.setCategories(finalCategories.stream()
-                .map(categoryMapper::toResponse)
+                .map(categoryMapper::toSearchResponse)
                 .collect(Collectors.toList()));
 
         return response;
@@ -209,34 +213,13 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public void deleteProduct(Long id) {
-        Product product = productRepository.getOneByStatus(id,Status.ACTIVE)
-                .orElseThrow(() -> new RuntimeException(
-                        messageSource.getMessage("product.not.found", new Object[]{id}, LocaleContextHolder.getLocale())
-                ));
-
-        product.setStatus(Status.INACTIVE);
-
-        List<ProductImage> productImages = product.getProductImages();
-        if (productImages != null && !productImages.isEmpty()) {
-            productImages.forEach(image -> {
-                image.setStatus(Status.INACTIVE);
-            });
+        int updated = productRepository.softDeleteProduct(id, Status.INACTIVE, Status.ACTIVE);
+        if (updated == 0) {
+            throw new RuntimeException("Không tìm thấy sản phẩm cần xóa");
         }
-
-        List<ProductCategory> productCategories = productCategoryRepository.getAllByProductAndStatus(id,Status.ACTIVE);
-        if (!productCategories.isEmpty()) {
-            productCategories.forEach(pc -> {
-                pc.setStatus(Status.INACTIVE);
-            });
-        }
-
-        productRepository.save(product);
-        if (productImages != null && !productImages.isEmpty()) {
-            productImageRepository.saveAll(productImages);
-        }
-        if (!productCategories.isEmpty()) {
-            productCategoryRepository.saveAll(productCategories);
-        }
+        productRepository.softDeleteProduct(id, Status.INACTIVE, Status.ACTIVE);
+        productImageRepository.softDeleteImagesByProductId(id, Status.INACTIVE, Status.ACTIVE);
+        productCategoryRepository.softDeleteProductCategoriesByProductId(id, Status.INACTIVE, Status.ACTIVE);
     }
 
     @Override
@@ -244,8 +227,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByIdAndStatus(id,Status.ACTIVE)
                 .orElseThrow(() -> new RuntimeException(messageSource.getMessage("product.not.found", new Object[]{id}, LocaleContextHolder.getLocale())
                 ));
-
-        List<CategoryResponse> categoryResponses = productCategoryRepository.findActiveCategoryResponsesByProductId(id,Status.ACTIVE);
+        List<CategorySearchResponse> categoryResponses = productCategoryRepository.findActiveCategoryResponsesByProductId(id,Status.ACTIVE);
 
         ProductResponse response = productMapper.toResponse(product);
         response.setCategories(categoryResponses);

@@ -18,6 +18,8 @@ public interface CategoryMapper {
 
     CategoryResponse toResponse(Category category);
 
+    CategorySearchResponse toSearchResponse(Category category);
+
 
     List<CategoryResponse> toResponseList(List<Category> categories);
 
