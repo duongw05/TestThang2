@@ -15,6 +15,7 @@
     "detailTitle": "Category Details",
     "exportExcel": "Export Excel",
     "add": "Add Category",
+    "update": "Update Category",
     "emptyText": "No categories match the filter",
     "noImage": "No image",
     "noDescription": "No description",
@@ -102,7 +103,7 @@
     "enterCode": "Enter code",
     "fromDate": "From date",
     "toDate": "To date",
-    "enterDescription": "Enter product description",
+    "enterDescription": "Enter description",
     "enterQuantity": "Enter quantity",
     "enterPrice": "Enter price",
     "selectCategory": "Select category"
@@ -112,7 +113,7 @@
   },
   "action": {
     "search": "Search",
-    "reset": "Clear Filters",
+    "reset": "Reset",
     "details": "Details",
     "actions": "Actions",
     "back": "Back",

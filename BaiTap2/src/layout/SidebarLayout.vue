@@ -1,6 +1,5 @@
 <template>
   <nav class="d-flex flex-column bg-white p-3 min-vh-100 border-end" style="width: 250px">
-    <!-- Logo -->
     <div class="d-flex align-items-center mb-4">
       <img
           :src="logoSrc"
@@ -10,9 +9,7 @@
       />
     </div>
 
-    <!-- Navigation -->
     <ul class="nav flex-column">
-      <!-- Home -->
       <li class="nav-item">
         <RouterLink
             class="nav-link py-3"
@@ -24,7 +21,6 @@
         </RouterLink>
       </li>
 
-      <!-- Product Management -->
       <li class="nav-item">
         <div
             class="nav-link py-3 d-flex justify-content-between align-items-center"

@@ -15,6 +15,7 @@
     "detailTitle": "Chi tiết danh mục",
     "exportExcel": "Xuất Excel",
     "add": "Thêm danh mục",
+    "update": "Sửa danh mục",
     "emptyText": "Không có danh mục nào phù hợp với bộ lọc",
     "noImage": "Không có ảnh",
     "noDescription": "Không có mô tả",
@@ -108,7 +109,7 @@
     "enterCode": "Nhập mã",
     "fromDate": "Từ ngày",
     "toDate": "Đến ngày",
-    "enterDescription": "Nhập mô tả sản phẩm",
+    "enterDescription": "Nhập mô tả ",
     "enterQuantity": "Nhập số lượng",
     "enterPrice": "Nhập giá bán",
     "selectCategory": "Chọn danh mục"
@@ -120,7 +121,7 @@
 
   "action": {
     "search": "Tìm kiếm",
-    "reset": "Xóa lọc",
+    "reset": "Làm mới",
     "details": "Chi tiết",
     "actions": "Thao tác",
     "back": "Quay lại",

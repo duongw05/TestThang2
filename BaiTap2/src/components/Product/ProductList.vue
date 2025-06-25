@@ -33,6 +33,7 @@
                   value-format="DD/MM/YYYY HH:mm:ss"
                   class="w-100"
                   clearable
+                  :disabled-date="disableFutureDates"
               />
             </el-form-item>
           </el-col>
@@ -193,7 +194,7 @@ const fetchProducts = async () => {
       await fetchProducts();
     }
   } catch (err) {
-    ElMessage.error(t('product.exportError'));
+    ElMessage.error(t('product.noData'));
     products.value = [];
     totalElements.value = 0;
     currentPage.value = 1;

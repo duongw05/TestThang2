@@ -28,7 +28,7 @@
             type="datetime"
             :placeholder="t('filter.fromDate')"
             format="DD/MM/YYYY HH:mm:ss"
-            value-format="YYYY-MM-DDTHH:mm:ss"
+            value-format="DD/MM/YYYY HH:mm:ss"
             clearable
             class="date-picker"
         />
@@ -37,7 +37,7 @@
             type="datetime"
             :placeholder="t('filter.toDate')"
             format="DD/MM/YYYY HH:mm:ss"
-            value-format="YYYY-MM-DDTHH:mm:ss"
+            value-format="DD/MM/YYYY HH:mm:ss"
             clearable
             class="date-picker"
         />
@@ -54,7 +54,7 @@
           border
           stripe
           v-loading="loading"
-          :element-loading-text="t('messages.loadFailed')"
+          :element-loading-text="t('loading')"
           :empty-text="t('category.emptyText')"
           class="category-table"
       >
